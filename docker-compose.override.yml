@@ -14,8 +14,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - default
+    ports:
+      - "5432:5432"
 
   app:
     build:
@@ -36,8 +36,6 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
-    networks:
-      - default
 
   caddy:
     image: caddy:alpine
@@ -51,14 +49,8 @@ services:
     depends_on:
       - app
     restart: unless-stopped
-    networks:
-      - default
 
 volumes:
   postgres_data:
   caddy_data:
   caddy_config:
-
-networks:
-  default:
-    driver: bridge

@@ -19,7 +19,8 @@ jobs:
     
     - name: Run tests with Docker Compose
       run: |
-        docker-compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+        # Используем docker compose (без дефиса) - встроенный плагин
+        docker compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
     
   build-and-push:
     needs: test
