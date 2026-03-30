@@ -17,10 +17,43 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
     
-    - name: Run tests with Docker Compose
+    - name: Build test image
       run: |
-        # Используем docker compose (без дефиса) - встроенный плагин
-        docker compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+        docker build -f Dockerfile.production -t app-test:latest .
+    
+    - name: Start PostgreSQL
+      run: |
+        docker run -d \
+          --name postgres \
+          -e POSTGRES_USER=postgres \
+          -e POSTGRES_PASSWORD=password \
+          -e POSTGRES_DB=blog_test \
+          -p 5432:5432 \
+          postgres:15-alpine
+    
+    - name: Wait for PostgreSQL
+      run: |
+        for i in {1..30}; do
+          if docker exec postgres pg_isready -U postgres; then
+            echo "PostgreSQL is ready"
+            break
+          fi
+          echo "Waiting for PostgreSQL... $i"
+          sleep 2
+        done
+    
+    - name: Run tests
+      run: |
+        docker run --rm \
+          --link postgres:postgres \
+          -e NODE_ENV=test \
+          -e DATABASE_HOST=postgres \
+          -e DATABASE_PORT=5432 \
+          -e DATABASE_NAME=blog_test \
+          -e DATABASE_USERNAME=postgres \
+          -e DATABASE_PASSWORD=password \
+          app-test:latest \
+          make test
     
   build-and-push:
     needs: test
