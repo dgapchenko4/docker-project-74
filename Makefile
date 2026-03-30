@@ -1,6 +1,5 @@
-# Автоматическое определение команды Docker Compose
-# Проверяем наличие docker-compose (старого) или используем docker compose (новый)
-DOCKER_COMPOSE := $(shell docker-compose --version > /dev/null 2>&1 && echo "docker-compose" || echo "docker compose")
+# Используем только docker compose (без дефиса) - современный плагин
+DOCKER_COMPOSE := docker compose
 
 # Установка зависимостей
 setup:
@@ -8,11 +7,11 @@ setup:
 
 # Запуск тестов через Docker Compose
 test:
-	$(DOCKER_COMPOSE) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+	$(DOCKER_COMPOSE) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app --remove-orphans
 
 # CI команда для GitHub Actions
 ci:
-	$(DOCKER_COMPOSE) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+	$(DOCKER_COMPOSE) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app --remove-orphans
 
 # Запуск приложения в режиме разработки
 dev:
@@ -24,8 +23,8 @@ down:
 
 # Полная пересборка с очисткой томов
 rebuild:
-	$(DOCKER_COMPOSE) down --volumes
-	$(DOCKER_COMPOSE) build
+	$(DOCKER_COMPOSE) down --volumes --remove-orphans
+	$(DOCKER_COMPOSE) build --no-cache
 
 # Просмотр логов
 logs:
@@ -45,7 +44,7 @@ shell:
 
 # Очистка всех ресурсов
 clean:
-	$(DOCKER_COMPOSE) down -v
+	$(DOCKER_COMPOSE) down -v --remove-orphans
 	docker system prune -f
 
 # Вывод справки
