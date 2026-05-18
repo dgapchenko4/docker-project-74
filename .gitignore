@@ -1,3 +1,5 @@
 .env
 *.sqlite
 *.sqlite3
+app/.npm/
+app/__tests__/app.test.js
