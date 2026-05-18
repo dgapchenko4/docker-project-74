@@ -1,32 +1,19 @@
-# Запуск базы данных
-db-up:
-	docker compose up -d db
-
-# Ожидание готовности базы данных
-wait-db: db-up
-	@echo "Waiting for database at db:5432..."
+# Запуск базы данных перед миграциями
+setup:
+	docker-compose -f ../docker-compose.yml -f ../docker-compose.override.yml up -d db
+	@echo "Waiting for database..."
 	@for i in $$(seq 1 30); do \
-		docker compose exec db pg_isready -U postgres 2>/dev/null && echo "Database ready!" && exit 0; \
+		docker-compose exec db pg_isready -U postgres 2>/dev/null && break; \
 		echo "Waiting... $$i/30"; \
 		sleep 2; \
-	done; \
-	echo "Database not available"; \
-	exit 1
-
-# Миграции с ожиданием базы
-migrate: wait-db
+	done
+	npm install
 	npm run migrate
 
-# Основная установка
-setup:
-	npm install
-	make migrate
-
-# Запуск тестов
+# Остальные цели
 test:
 	npm test
 
-# Остальные цели
 dev:
 	npm run dev
 
@@ -39,4 +26,7 @@ start-frontend:
 build:
 	npm run build
 
-.PHONY: db-up wait-db migrate setup test dev start-backend start-frontend build
+migrate:
+	npm run migrate
+
+.PHONY: setup test dev start-backend start-frontend build migrate
