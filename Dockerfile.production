@@ -1,21 +1,22 @@
 FROM node:20.12.2
 
+# Устанавливаем Python для сборки нативных модулей (sqlite3)
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Копируем package.json и package-lock.json для кеширования слоев
-COPY app/package.json package.json
-COPY app/package-lock.json package-lock.json
+# Копируем package.json и устанавливаем ВСЕ зависимости (нужны для сборки)
+COPY app/package*.json ./
+RUN npm ci --no-audit --no-fund
 
-# Устанавливаем зависимости (чистая установка)
-RUN npm ci
-
-# Копируем всё приложение
+# Копируем исходный код
 COPY app/. .
 
-EXPOSE 8080
-ENV NODE_ENV=production
+# Собираем фронтенд (webpack)
+RUN npm run build
 
-# Сборка приложения
-RUN make build
+# Очищаем dev-зависимости (оставляем только production)
+RUN npm prune --production
 
-CMD ["make", "start"]
+# Запуск приложения
+CMD ["npm", "start"]
