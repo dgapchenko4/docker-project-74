@@ -1,34 +1,23 @@
-setup: install db-migrate
-
-install:
+setup:
 	npm install
-
-db-migrate:
 	npm run migrate
+
+test:
+	npm test
+
+dev:
+	npm run dev
 
 build:
 	npm run build
 
-prepare-env:
-	cp -n .env.example .env
-
-start:
-	NODE_ENV=production npm run start
-
-dev:
-	npx concurrently "make start-frontend" "make start-backend"
+migrate:
+	npm run migrate
 
 start-backend:
-	npm start -- --watch --verbose-watch --ignore-watch='node_modules .git .sqlite'
+	npm start
 
 start-frontend:
 	npx webpack --watch --progress
 
-lint:
-	npx eslint .
-
-lint-fix:
-	npx eslint --fix .
-
-test:
-	NODE_ENV=test npm test -s
+.PHONY: setup test dev build migrate start-backend start-frontend
