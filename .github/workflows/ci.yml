@@ -22,6 +22,15 @@ jobs:
             sleep 2
           done
 
+      - name: Debug - list files
+        run: |
+          echo "=== Files in /app ==="
+          docker compose run --rm app ls -la /app/
+          echo "=== Files in /app/__tests__ ==="
+          docker compose run --rm app ls -la /app/__tests__/ || echo "__tests__ not found"
+          echo "=== Jest version ==="
+          docker compose run --rm app npx jest --version
+
       - name: Run migrations and tests
         run: |
           docker compose run --rm app npm install
