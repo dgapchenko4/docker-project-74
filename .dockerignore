@@ -11,4 +11,3 @@ build
 *.log
 __fixtures__
 *.code-workspace
-#app/node_modules

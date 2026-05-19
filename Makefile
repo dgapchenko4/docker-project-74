@@ -1,50 +1,25 @@
-.DEFAULT_GOAL := help
+# Используем docker compose (без дефиса) - современный плагин
+DOCKER_COMPOSE := docker compose
 
+# Установка зависимостей
 setup:
-	docker compose run --rm app make setup
+	$(DOCKER_COMPOSE) run --rm app make setup
 
+# Запуск тестов через Docker Compose
 test:
-	docker compose up --abort-on-container-exit --exit-code-from app --remove-orphans
+	$(DOCKER_COMPOSE) up --abort-on-container-exit --exit-code-from app
 
+# CI команда для GitHub Actions
 ci:
-	docker compose up --abort-on-container-exit --exit-code-from app --remove-orphans
+	$(DOCKER_COMPOSE) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
 
+# Запуск приложения в режиме разработки
 dev:
-	docker compose up
+	$(DOCKER_COMPOSE) up
 
+# Остановка контейнеров
 down:
-	docker compose down
+	$(DOCKER_COMPOSE) down
 
-rebuild:
-	docker compose down --volumes --remove-orphans
-	docker compose build --no-cache
-
-logs:
-	docker compose logs -f
-
-status:
-	docker compose ps
-
-migrate:
-	docker compose exec app npm run migrate
-
-shell:
-	docker compose exec app bash
-
-clean:
-	docker compose down -v --remove-orphans
-	docker system prune -f
-
-help:
-	@echo "Доступные команды:"
-	@echo "  make setup    - установка зависимостей"
-	@echo "  make test     - запуск тестов"
-	@echo "  make ci       - запуск тестов (для CI)"
-	@echo "  make dev      - запуск приложения в режиме разработки"
-	@echo "  make down     - остановка контейнеров"
-	@echo "  make rebuild  - полная пересборка"
-	@echo "  make logs     - просмотр логов"
-	@echo "  make status   - статус контейнеров"
-	@echo "  make migrate  - запуск миграций"
-	@echo "  make shell    - вход в контейнер app"
-	@echo "  make clean    - полная очистка"
+# Остальные команды...
+.PHONY: setup test ci dev down
