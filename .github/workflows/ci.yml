@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Start PostgreSQL
+        run: docker compose up -d db
+
+      - name: Wait for PostgreSQL
+        run: |
+          while ! docker compose exec db pg_isready -U postgres; do
+            sleep 2
+          done
+
+      - name: Run migrations and tests
+        run: |
+          docker compose run --rm app npm install
+          docker compose run --rm app npm run migrate
+          docker compose run --rm app npm test -- --verbose
+
+      - name: Shutdown
+        run: docker compose down
