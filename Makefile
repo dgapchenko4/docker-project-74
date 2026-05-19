@@ -5,7 +5,7 @@ setup:
 	$(DOCKER_COMPOSE) run --rm app make setup
 
 test:
-	$(DOCKER_COMPOSE) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+	$(DOCKER_COMPOSE) -f docker-compose.yml run --rm app npm test -- --verbose
 
 ci:
 	$(DOCKER_COMPOSE) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
