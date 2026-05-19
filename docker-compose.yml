@@ -2,5 +2,8 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    image: dgapchenko4/docker-project-74:latest
     command: make test
