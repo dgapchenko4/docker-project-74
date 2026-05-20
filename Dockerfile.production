@@ -1,0 +1,19 @@
+FROM node:20.12.2
+
+# Устанавливаем Python для сборки нативных модулей
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Копируем package.json и устанавливаем зависимости
+COPY app/package*.json ./
+RUN npm ci --no-audit --no-fund
+
+# Копируем код и собираем
+COPY app/. .
+RUN npm run build
+
+EXPOSE 8080
+ENV NODE_ENV=production
+
+CMD ["npm", "start"]
