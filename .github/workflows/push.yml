@@ -26,14 +26,11 @@ jobs:
             sleep 2
           done
 
-      - name: Install dependencies
-        run: docker compose run --rm app npm install
-
-      - name: Run migrations
-        run: docker compose run --rm app npm run migrate
-
-      - name: Run tests
-        run: docker compose run --rm app npm test -- --verbose
+      - name: Run migrations and tests
+        run: |
+          docker compose run --rm app npm install
+          docker compose run --rm app npm run migrate
+          docker compose run --rm app npm test
 
       - name: Shutdown
         run: docker compose down
