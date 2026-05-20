@@ -1,19 +1,6 @@
 wait-db:
 	@echo "Waiting for database at db:5432..."
-	@node -e '
-		const net = require("net");
-		const wait = () => {
-			const s = net.connect(5432, "db", () => {
-				console.log("Database ready!");
-				process.exit(0);
-			});
-			s.on("error", () => {
-				process.stdout.write(".");
-				setTimeout(wait, 2000);
-			});
-		};
-		wait();
-	'
+	@node wait-for-db.js
 
 setup:
 	docker-compose up -d db
