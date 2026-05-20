@@ -15,4 +15,3 @@
 ```bash
 docker pull dgapchenko4/docker-project-74:latest
 docker run -p 8080:8080 dgapchenko4/docker-project-74:latest make start
-eof
