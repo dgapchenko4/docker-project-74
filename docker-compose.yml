@@ -2,7 +2,23 @@ version: '3.8'
 
 services:
   app:
-    build: .
-    volumes:
-      - ./app:/app
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    image: dgapchenko4/docker-project-74:latest
     command: make test
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: blog_development
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
