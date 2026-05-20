@@ -1,6 +1,6 @@
 wait-db:
 	@echo "Waiting for database at db:5432..."
-	@node wait-for-db.js
+	@node wait-for-db.cjs
 
 setup:
 	docker-compose up -d db
