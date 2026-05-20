@@ -1,9 +1,4 @@
-wait-db:
-	@echo "Waiting for database at db:5432..."
-	@node wait-for-db.cjs
-
 setup:
-	make wait-db
 	npm install
 	npm run migrate
 
@@ -25,4 +20,4 @@ start-backend:
 start-frontend:
 	npx webpack --watch --progress
 
-.PHONY: wait-db setup test dev build migrate start-backend start-frontend
+.PHONY: setup test dev build migrate start-backend start-frontend
