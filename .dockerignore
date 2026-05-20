@@ -2,4 +2,12 @@ node_modules
 .git
 .env
 .DS_Store
+coverage
+dist
+build
+*.md
+.vscode
+.idea
+*.log
 __fixtures__
+*.code-workspace
