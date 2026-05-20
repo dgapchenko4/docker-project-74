@@ -3,7 +3,6 @@ wait-db:
 	@node wait-for-db.cjs
 
 setup:
-	docker-compose up -d db
 	make wait-db
 	npm install
 	npm run migrate
